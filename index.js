@@ -15,9 +15,13 @@ app.use('/api-docs', swaggerUi.serve);
 app.use(cors());
 app.use(express.json());
 
-// Carrega o arquivo Swagger
+// Carrega o arquivo Swagger e configura opções
 const swaggerDocument = YAML.load(path.join(__dirname, 'api/swagger-ui/swagger.yaml'));
-app.use('/api-docs', swaggerUi.setup(swaggerDocument));
+const swaggerOptions = {
+    customCss: '.swagger-ui .topbar { display: none }',
+    customSiteTitle: "API de Gerenciamento de Cursos"
+};
+app.use('/api-docs', swaggerUi.setup(swaggerDocument, swaggerOptions));
 
 // Redireciona a raiz para a documentação Swagger
 app.get('/', (req, res) => {
