@@ -4,7 +4,6 @@ info:
   version: 1.0.0
   description: API para gerenciamento de cursos e aulas
     - https://back-cursos.vercel.app
-    - http://localhost:3000
 
 servers:
   - url: https://back-cursos.vercel.app
