@@ -4,52 +4,6 @@ Backend para sistema de cursos (JavaScript) — estrutura para gerenciar usuári
 
 Tudo em JavaScript, documentação em português.
 
-## Visão geral
-
-- API Express + MongoDB (mongoose)
-- Cada usuário, ao se registrar, terá um banco MongoDB próprio com o nome igual ao `usuario` informado.
-- CRUD completo de cursos. Cada curso possui título, descrição, array de imagens e um array de aulas. Cada aula tem número, título, descrição e tempo.
-- Autenticação via JWT.
-- Swagger disponível em `/api-docs` (em português).
-
-## Requisitos
-
-- Node.js 16+ (recomendado)
-- MongoDB rodando localmente ou URI acessível
-
-## Variáveis de ambiente
-
-Crie um arquivo `.env` na pasta `back-Curso` com pelo menos:
-
-MONGODB_URI=mongodb://localhost:27017/admin
-JWT_SECRET=sua_chave_secreta_aqui
-PORT=3000
-
-> Observação: `MONGODB_URI` é a conexão administrativa/central usada pela aplicação para checar bancos existentes; quando um usuário se registra, a aplicação cria uma conexão separada apontando para `mongodb://<host>:<port>/<usuario>`.
-
-## Instalação
-
-Abra o CMD na pasta `back-Curso` e rode:
-
-```bat
-cd back-Curso
-npm install
-```
-
-## Rodando em desenvolvimento
-
-```bat
-npm run dev
-```
-
-ou
-
-```bat
-npm start
-```
-
-A API ficará disponível em `http://localhost:3000` (ou a porta definida em `.env`). A documentação Swagger ficará em `http://localhost:3000/api-docs`.
-
 ## Endpoints principais (resumo)
 
 Formato de resposta de sucesso:

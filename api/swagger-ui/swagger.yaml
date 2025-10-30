@@ -3,6 +3,11 @@ info:
   title: API de Gerenciamento de Cursos
   version: 1.0.0
   description: API para gerenciamento de cursos e aulas
+   - URL do backend https://back-cursos.vercel.app
+
+
+servers:
+  - url: https://back-cursos.vercel.app
 
 paths:
   /cursos/deletar-todos:
