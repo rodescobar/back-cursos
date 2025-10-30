@@ -15,6 +15,11 @@ app.use(express.json());
 const swaggerDocument = YAML.load(path.join(__dirname, 'api/swagger-ui/swagger.yaml'));
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
+// Redireciona a raiz para a documentação Swagger
+app.get('/', (req, res) => {
+    res.redirect('/api-docs');
+});
+
 // Conexão com o MongoDB
 mongoose.connect(process.env.MONGODB_URI, {
     useNewUrlParser: true,
