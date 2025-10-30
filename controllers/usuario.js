@@ -81,16 +81,24 @@ exports.login = async (req, res) => {
             return res.status(401).json({ erro: "Usuário ou senha inválidos" });
         }
 
+        // Definir tempo de expiração (24 horas em segundos)
+        const expiresIn = 24 * 60 * 60;
+        const timestamp = Math.floor(Date.now() / 1000);
+        const expires_at = timestamp + expiresIn;
+
         const token = jwt.sign({ 
             usuario: user.usuario,
             nome: user.nome,
             email: user.email
         }, process.env.JWT_SECRET, { 
-            expiresIn: '24h' 
+            expiresIn: `${expiresIn}s`
         });
         
         return res.status(200).json({ 
             token,
+            expires_in: expiresIn,
+            expires_at,
+            timestamp,
             usuario: {
                 nome: user.nome,
                 email: user.email,

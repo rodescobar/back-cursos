@@ -124,15 +124,31 @@ paths:
                 properties:
                   token:
                     type: string
+                    description: Token JWT para autenticação
+                  expires_in:
+                    type: integer
+                    description: Tempo de expiração em segundos
+                    example: 86400
+                  expires_at:
+                    type: integer
+                    description: Timestamp Unix de quando o token expira
+                    example: 1698681600
+                  timestamp:
+                    type: integer
+                    description: Timestamp Unix atual
+                    example: 1698595200
                   usuario:
                     type: object
                     properties:
                       nome:
                         type: string
+                        example: "João Silva"
                       email:
                         type: string
+                        example: "joao@email.com"
                       usuario:
                         type: string
+                        example: "joao"
         401:
           description: Usuário ou senha inválidos
           content:
