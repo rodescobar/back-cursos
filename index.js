@@ -8,12 +8,16 @@ const path = require('path');
 
 const app = express();
 
+
+// Swagger UI static assets fix for Vercel/Express
+app.use('/api-docs', swaggerUi.serve);
+
 app.use(cors());
 app.use(express.json());
 
 // Carrega o arquivo Swagger
 const swaggerDocument = YAML.load(path.join(__dirname, 'api/swagger-ui/swagger.yaml'));
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+app.use('/api-docs', swaggerUi.setup(swaggerDocument));
 
 // Redireciona a raiz para a documentação Swagger
 app.get('/', (req, res) => {
