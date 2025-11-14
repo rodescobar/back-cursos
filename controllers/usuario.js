@@ -1,9 +1,7 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-
-// Conexão com o banco central de usuários
-const centralConnection = mongoose.createConnection(process.env.MONGODB_URI);
+const { getCentralConnection, getConnection } = require('../utils/dbConnection');
 
 // Schema do usuário para o banco central
 const usuarioSchema = new mongoose.Schema({
@@ -14,15 +12,19 @@ const usuarioSchema = new mongoose.Schema({
     createdAt: { type: Date, default: Date.now }
 });
 
-// Modelo de usuário no banco central
-const UsuarioCentral = centralConnection.model('Usuario', usuarioSchema);
+// Função para obter o modelo de usuário
+const getUsuarioModel = async () => {
+    const centralConnection = await getCentralConnection();
+    return centralConnection.model('Usuario', usuarioSchema);
+};
 
 // Registrar novo usuário
 exports.registro = async (req, res) => {
     const { usuario, senha, email, nome } = req.body;
-    let userDb = null;
     
     try {
+        const UsuarioCentral = await getUsuarioModel();
+        
         // Verifica se o usuário já existe no banco central
         const usuarioExiste = await UsuarioCentral.findOne({ usuario });
         
@@ -39,26 +41,13 @@ exports.registro = async (req, res) => {
             nome
         }).save();
 
-        // Cria o banco específico do usuário
-        const userUri = process.env.MONGODB_URI.replace(/\/[^\/]*\?/, `/${usuario}?`);
-        userDb = await mongoose.createConnection(userUri, {
-            useNewUrlParser: true,
-            useUnifiedTopology: true
-        }).asPromise();
-
-        // Fecha a conexão após criar o banco
-        await userDb.close();
+        // Cria o banco específico do usuário (apenas para inicializar)
+        // A conexão será gerenciada pelo pool
+        await getConnection(usuario);
 
         return res.status(200).json({ msg: "Usuário criado com sucesso" });
     } catch (error) {
         console.error('Erro ao criar usuário:', error);
-        if (userDb) {
-            try {
-                await userDb.close();
-            } catch (closeError) {
-                console.error('Erro ao fechar conexão:', closeError);
-            }
-        }
         return res.status(500).json({ erro: "Erro ao criar usuário" });
     }
 };
@@ -68,6 +57,8 @@ exports.login = async (req, res) => {
     const { usuario, senha } = req.body;
     
     try {
+        const UsuarioCentral = await getUsuarioModel();
+        
         // Busca o usuário no banco central
         const user = await UsuarioCentral.findOne({ usuario });
         
@@ -114,6 +105,7 @@ exports.login = async (req, res) => {
 // Recuperar dados do usuário
 exports.getDadosUsuario = async (req, res) => {
     try {
+        const UsuarioCentral = await getUsuarioModel();
         const user = await UsuarioCentral.findOne({ usuario: req.usuario }).select('-senha');
         
         if (!user) {
@@ -132,6 +124,7 @@ exports.atualizarDados = async (req, res) => {
     const { nome, email } = req.body;
     
     try {
+        const UsuarioCentral = await getUsuarioModel();
         const user = await UsuarioCentral.findOne({ usuario: req.usuario });
         
         if (!user) {
@@ -162,6 +155,7 @@ exports.alterarSenha = async (req, res) => {
     const { senhaAtual, novaSenha } = req.body;
     
     try {
+        const UsuarioCentral = await getUsuarioModel();
         const user = await UsuarioCentral.findOne({ usuario: req.usuario });
         
         if (!user) {
