@@ -230,7 +230,7 @@ paths:
                     example: "Não autorizado"
 
   /usuario/alterar-senha:
-    post:
+    put:
       tags:
         - Usuário
       summary: Altera senha do usuário
